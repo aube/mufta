@@ -94,7 +94,6 @@ function renderLinks() {
 			shiftX = 0;
 			if (startPos != endPos) {
 				shiftX = startPos < endPos ? 1 : -1;
-				console.log('shiftX',shiftX);
 				while (shiftsXMap.indexOf(shiftX) >=0)
 					shiftX += shiftX > 0 ? 1 : -1;
 				shiftsXMap.push(shiftX);
