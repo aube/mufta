@@ -260,7 +260,8 @@ function _createDataArray(name) {
 	data[name] = [];
 
 	for (var n = 0; rows0[n]; n++) {
-		if (rows0[n].trim() > "") {
+		rows0[n] = rows0[n].trim();
+		if (rows0[n] > "") {
 			row = rows0[n].split(',');
 			data[name].push(row);
 			if (row[0] != cable) {
