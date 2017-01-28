@@ -39,13 +39,42 @@ function update() {
 }
 
 
+//convert string cable, numberInCamble to global number
+function convertLinks(_links) {
+	var links,
+		start,
+		end,
+		oneSideConnection;
+
+	links = _links.split('-');
+	if (links.length != 2)
+		return _links;
+
+	start = data['left-map'][links[0]] || data['right-map'][links[0]];
+	end = data['right-map'][links[1]] || data['left-map'][links[1]];
+
+	if (!start || !end)
+		return _links;
+	start--;
+	end--;
+
+	if (data['right-map'][links[0]] && data['right-map'][links[1]])
+		oneSideConnection = 'right';
+	else if (data['left-map'][links[0]] && data['left-map'][links[1]])
+		oneSideConnection = 'left';
+
+	return (oneSideConnection == 'left' ? '_' : '') + start + '-' + end + (oneSideConnection == 'right' ? '_' : '');
+}
+
+
 function renderLinks() {
 	var x2, y2, x1, y1, center, color,
 		matrixX = Array(Math.max(data.left.length, data.right.length)).fill(0),
 		_shiftsXMap = {center: [], left: [], right: []},
 		shiftsXMap,
 		start,
-		end;
+		end,
+		links;
 	
 
 	for (var n = 0; n < data.links.length; n++) {
@@ -53,14 +82,15 @@ function renderLinks() {
 		if (data.links[n] == "")
 			continue;
 
+		links = convertLinks(data.links[n]);
 
-		if (data.links[n].substr(0,1) == "_") {
+		if (links.substr(-1) == "_") {
 			end = start = 'right';
 			x1 = x2 = sizes.width - sizes.cableWidth;
 			center = x2 - sizes.cableWidth / 2;
 			shiftsXMap = _shiftsXMap.right;
 
-		} else if (data.links[n].substr(-1) == "_") {
+		} else if (links.substr(0, 1) == "_") {
 			end = start = 'left';
 			x1 = x2 = sizes.cableWidth;
 			center = sizes.cableWidth * 1.5;
@@ -75,7 +105,7 @@ function renderLinks() {
 			shiftsXMap = _shiftsXMap.center;
 		}
 
-		var dn = data.links[n].replace('_','').split('-'),
+		var dn = links.replace('_','').split('-'),
 			startPos = +dn[0],
 			endPos = +dn[1],
 			startData = data[start][startPos],
@@ -254,20 +284,23 @@ function _createDataArray(name) {
 
 	var rows0 = window[name].value.split('\n'),//.sort();
 		cable,
-		row;
+		row,
+		numberInCabel = 1;
 	
 	data[name] = [];
+	data[name + '-map'] = {};
 
 	for (var n = 0; rows0[n]; n++) {
 		rows0[n] = rows0[n].trim();
-		if (rows0[n] > "") {
-			row = rows0[n].split(',');
-			data[name].push(row);
-			if (row[0] != cable) {
-				cable = row[0];
-				shiftYGlobal[name].push(sizes.cableHeight * n);
-			}
+		if (rows0[n] == "") continue;
+		row = rows0[n].split(',');
+		data[name].push(row);
+		if (row[0] != cable) {
+			numberInCabel = 1;
+			cable = row[0];
+			shiftYGlobal[name].push(sizes.cableHeight * n);
 		}
+		data[name + '-map'][row[0] + ',' + numberInCabel++] = n + 1;
 	}
 	window[name].value = rows0.join('\n');
 
