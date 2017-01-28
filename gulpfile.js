@@ -60,7 +60,6 @@ gulp.task('html', function ()
 {
 	return gulp.src(params.html.src)
 		.pipe(plumber())
-		.pipe(gulpif(argv.production, minify()))
 		.pipe(gulp.dest(params.html.dest))
 		.pipe(livereload());
 });
@@ -160,27 +159,4 @@ gulp.task('html', function ()
 		.pipe(livereload());
 });
 
-
-
-//call from .bowerrc postinstall section
-gulp.task('install', ['html', 'scss', 'scss_autoload', 'js', 'js_autoload'], function ()
-{
-	var jsFiles = [
-		'./bower_components/angularjs/angular.min.js',
-		'./bower_components/bootstrap/dist/js/bootstrap.min.js'
-	];
-	var cssFiles = [
-		'./bower_components/bootstrap/dist/css/bootstrap.min.css',
-		'./bower_components/bootstrap/dist/css/bootstrap.min.css.map'
-	];
-	var fontsFiles = [
-		'./bower_components/bootstrap/dist/fonts/*'
-	];
-	gulp.src(jsFiles)
-		.pipe(gulp.dest('./build/js/'));
-	gulp.src(cssFiles)
-		.pipe(gulp.dest('./build/css/'));
-	gulp.src(fontsFiles)
-		.pipe(gulp.dest('./build/fonts/'));
-});
 

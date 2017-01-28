@@ -25,15 +25,15 @@ var left = document.getElementById('left'),
 
 function update() {
 	shiftYGlobal = {left: [], right: []};
-	_createDataArray('left'),
-	_createDataArray('right'),
-	data.links = links.value.split('\n');
+	_createDataArray('left');
+	_createDataArray('right');
 
 	while (mufta.lastChild) {
 		mufta.removeChild(mufta.lastChild);
 	}
 	mufta.setAttribute('height',
 		Math.max(data.left.length + shiftYGlobal.left.length, data.right.length + shiftYGlobal.right.length) * sizes.cableHeight + 1);
+
 	renderCables();
 	renderLinks();
 }
@@ -75,12 +75,14 @@ function renderLinks() {
 		start,
 		end,
 		links;
-	
 
-	for (var n = 0; n < data.links.length; n++) {
+	data.links = window.links.value.split('\n');
+	for (var n = data.links.length - 1; n >= 0; n--) {
 		data.links[n] = data.links[n].trim();
-		if (data.links[n] == "")
+		if (data.links[n] == "") {
+			delete data.links[n];
 			continue;
+		}
 
 		links = convertLinks(data.links[n]);
 
@@ -149,7 +151,8 @@ function renderLinks() {
 
 
 	}
-	links.value = data.links.join('\n');
+
+	window.links.value = data.links.join('\n');
 }
 
 
